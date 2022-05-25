@@ -1,6 +1,7 @@
 local curPaused
 local curPed
 local curCinematic
+local hudon = true
 
 Citizen.CreateThread(function ()
   while true do
@@ -15,7 +16,7 @@ Citizen.CreateThread(function ()
 
       local inVehicle = IsPedInAnyVehicle(ped, false)
 
-      if cinematic ~= curCinematic then
+      if cinematic ~= curCinematic or not hudon then
         DisplayRadar(false)
         curCinematic = cinematic
       elseif not cfg.persistentRadar and not cinematic then
@@ -178,3 +179,17 @@ AddEventHandler('onResourceStart', function(resourceName)
     InitializeHUD()
   end
 end)
+
+RegisterCommand('hud', function()
+  if hudon == false then
+    SendMessage('toggleHud', true)
+    InitializeHUD()
+    DisplayRadar(true)
+    hudon = true
+  else
+    SendMessage('toggleHud', false)
+    hudon = false
+    DisplayRadar(false)
+  end
+
+end, false)
